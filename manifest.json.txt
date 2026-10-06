@@ -1,0 +1,25 @@
+{
+  "name": "AlgoFinder V18 - FINAL STABLE",
+  "short_name": "AlgoFinder V18",
+  "description": "ALGOFINDER V18 FINAL STABLE - V14 Stable Base, Reset Data, WA/Tele Notif, Loncat AI, Shio, Grafik, Drive Sync, Blue White Theme",
+  "background_color": "#EAF3FF",
+  "theme_color": "#0A3D62",
+  "display": "standalone",
+  "orientation": "portrait",
+  "start_url": "./index.html",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
