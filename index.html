@@ -119,6 +119,12 @@ td:first-child{font-family:Oswald;background:#F0F7FF}
 <div class="bbfs-sub">BBFS 9 DIGIT DETERMINISTIK</div>
 <div id="bbfs" class="bbfs">---------</div>
 <div id="bbfsInfo" style="font-size:10px;color:#486581;margin-top:4px"></div>
+<div style="display:flex;gap:6px;margin-top:10px">
+<button class="btn-mini" onclick="sendWA()" style="flex:1;background:#25D366;color:#fff;border:none;font-size:12px;padding:10px">📱 KIRIM PREDIKSI KE WA</button>
+<button class="btn-mini" onclick="sendTelegram()" style="flex:1;background:#0088cc;color:#fff;border:none;font-size:12px;padding:10px">✈️ KIRIM KE TELE</button>
+<button class="btn-mini" onclick="shareNative()" style="background:#0A3D62;color:#fff;border:none;font-size:12px;padding:10px">🔗 SHARE</button>
+</div>
+<div style="font-size:9px;color:#718096;margin-top:6px">*Isi No WA di atas dulu, lalu SCAN, baru klik KIRIM. Yang terkirim BBFS + WinRate + Shio + WAKTUNYA NONGOL</div>
 </div>
 
 <div class="tabs">
@@ -388,13 +394,23 @@ function loadNotifSetting(){
 function testNotif(){
  let wa=document.getElementById("waNumber")?.value.trim();
  if(!wa)return alert("Isi No WA dulu bosq!");
- let msg=encodeURIComponent("TEST ALGOFINDER V18 FINAL STABLE - "+document.getElementById("market").value+" BBFS TEST OK");
+ let msg=encodeURIComponent("✅ TEST KONEKSI WA - ALGOFINDER V18 OK\nPasaran: "+document.getElementById("market").value+"\nJika pesan ini masuk, WA siap dipakai untuk kirim prediksi!");
  window.open("https://wa.me/"+wa+"?text="+msg,"_blank");
 }
 function sendWA(){
  let wa=document.getElementById("waNumber")?.value.trim();
- if(!wa)return alert("Isi WA dulu");
- window.open("https://wa.me/"+wa+"?text="+encodeURIComponent(lastNotifMessage||"ALGOFINDER V18"),"_blank");
+ if(!wa)return alert("Isi No WA dulu di atas bosq!");
+ if(!lastNotifMessage || lastNotifMessage.length<10) return alert("Klik SCAN dulu bosq, baru ada prediksi untuk dikirim!");
+ window.open("https://wa.me/"+wa+"?text="+encodeURIComponent(lastNotifMessage),"_blank");
+}
+function shareNative(){
+ if(!lastNotifMessage) return alert("SCAN dulu bosq!");
+ if(navigator.share){
+   navigator.share({title:"AlgoFinder V18 - "+document.getElementById("market").value, text:lastNotifMessage}).catch(e=>console.log(e));
+ }else{
+   // fallback copy
+   navigator.clipboard.writeText(lastNotifMessage).then(()=>alert("Prediksi di-copy! Tinggal paste ke WA bosq!")).catch(()=>alert(lastNotifMessage));
+ }
 }
 async function sendTelegram(){
  let token=document.getElementById("teleToken")?.value.trim();
@@ -497,22 +513,58 @@ process = function(data){
  try{
   let waktunya=[]; // recalc quickly
   let pos=[[],[],[],[]];data.forEach(n=>n.split("").forEach((d,i)=>pos[i].push(Number(d))));
-  pos.forEach((pa,pi)=>{let gap=calcGap(pa);for(let d=0;d<10;d++){if(gap[d].curr>=gap[d].avg*1.2)waktunya.push(`${["AS","COP","KEP","EKO"][pi]}:${d}`);}});
+  pos.forEach((pa,pi)=>{let gap=calcGap(pa);for(let d=0;d<10;d++){if(gap[d].curr>=gap[d].avg*1.2)waktunya.push(`${["AS","COP","KEP","EKO"][pi]}:${d} (gap ${gap[d].curr}/${gap[d].avg.toFixed(1)})`);}});
   let bbfsTxt=document.getElementById("bbfs").innerText;
   let pasar=document.getElementById("market").value;
+  let as9=document.getElementById("as9").innerText;
+  let cop9=document.getElementById("cop9").innerText;
+  let kep9=document.getElementById("kep9").innerText;
+  let eko9=document.getElementById("eko9").innerText;
+  let winRate=document.getElementById("rate").innerText;
+  let shioHot=document.getElementById("shioHot").innerText;
+  let shioCold=document.getElementById("shioCold").innerText;
+  let hotNum=document.getElementById("hotNum").innerText;
+  let dateStr=new Date().toLocaleDateString('id-ID',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
   if(waktunya.length>0){
    lastNotifMessage=`🚀 ALGOFINDER V18 FINAL STABLE
-Pasaran: ${pasar}
-BBFS: ${bbfsTxt}
-WAKTUNYA NONGOL (${waktunya.length}):
+📅 ${dateStr}
+🎯 Pasaran: ${pasar}
+
+💎 BBFS 9D: ${bbfsTxt}
+📍 POLTAR:
+AS: ${as9}
+COP: ${cop9}
+KEP: ${kep9}
+EKO: ${eko9}
+
+🔥 WAKTUNYA NONGOL (${waktunya.length}):
 - ${waktunya.join("\n- ")}
 
-WinRate: ${document.getElementById("rate").innerText}
-Shio Panas: ${document.getElementById("shioHot").innerText}`;
+📊 ANALISIS:
+• Hot: ${hotNum}
+• WinRate: ${winRate}
+• Shio Panas: ${shioHot}
+• Shio Dingin: ${shioCold}
+
+⚠️ Bijak bermain! Prediksi AI, bukan jaminan JP.
+🔗 ${window.location.href}`;
   }else{
-   lastNotifMessage=`✅ V18 ${pasar} BBFS ${bbfsTxt} - Tidak ada WAKTUNYA, aman.`;
+   lastNotifMessage=`✅ ALGOFINDER V18 FINAL STABLE
+📅 ${dateStr}
+🎯 Pasaran: ${pasar}
+
+💎 BBFS 9D: ${bbfsTxt}
+📍 POLTAR:
+AS: ${as9} | COP: ${cop9}
+KEP: ${kep9} | EKO: ${eko9}
+
+📊 WinRate: ${winRate} | Shio: ${shioHot}
+
+✅ Tidak ada angka yang WAKTUNYA, kondisi stabil.
+
+🔗 ${window.location.href}`;
   }
- }catch(e){console.log(e);}
+ }catch(e){console.log("Notif build error",e); lastNotifMessage=`BBFS ${document.getElementById("bbfs").innerText} - Pasaran ${document.getElementById("market").value}`;}
 }
 // Load notif setting on start
 let _origLoadMarket = loadMarket;
