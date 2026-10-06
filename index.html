@@ -15,7 +15,7 @@ if ('serviceWorker' in navigator) {
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>AlgoFinder V18 - FINAL STABLE</title>
+<title>AlgoFinder V18.1 - FIX WA SHARE PREDIKSI</title>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -65,8 +65,8 @@ td:first-child{font-family:Oswald;background:#F0F7FF}
 <body>
 <div class="container">
 <header>
-<h2>ALGOFINDER V18 — FINAL STABLE</h2>
-<p>V14 STABLE • RESET • WA/TELE • DRIVE OPTIONAL</p>
+<h2>ALGOFINDER V18.1 — FIX WA SHARE</h2>
+<p>V18.1 FIX • WA KIRIM PREDIKSI REAL • NOTIF LENGKAP</p>
 </header>
 
 <div class="panel">
@@ -119,12 +119,14 @@ td:first-child{font-family:Oswald;background:#F0F7FF}
 <div class="bbfs-sub">BBFS 9 DIGIT DETERMINISTIK</div>
 <div id="bbfs" class="bbfs">---------</div>
 <div id="bbfsInfo" style="font-size:10px;color:#486581;margin-top:4px"></div>
-<div style="display:flex;gap:6px;margin-top:10px">
-<button class="btn-mini" onclick="sendWA()" style="flex:1;background:#25D366;color:#fff;border:none;font-size:12px;padding:10px">📱 KIRIM PREDIKSI KE WA</button>
-<button class="btn-mini" onclick="sendTelegram()" style="flex:1;background:#0088cc;color:#fff;border:none;font-size:12px;padding:10px">✈️ KIRIM KE TELE</button>
-<button class="btn-mini" onclick="shareNative()" style="background:#0A3D62;color:#fff;border:none;font-size:12px;padding:10px">🔗 SHARE</button>
+<div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+<button class="btn-mini" onclick="sendWA()" style="flex:1;min-width:110px;background:#25D366;color:#fff;border:none;font-size:11px;padding:10px">📱 WA PRIBADI</button>
+<button class="btn-mini" onclick="sendWAGroup()" style="flex:1;min-width:110px;background:#128C7E;color:#fff;border:none;font-size:11px;padding:10px">👥 WA GROUP</button>
+<button class="btn-mini" onclick="sendTelegram()" style="flex:1;min-width:90px;background:#0088cc;color:#fff;border:none;font-size:11px;padding:10px">✈️ TELE</button>
+<button class="btn-mini" onclick="shareNative()" style="background:#0A3D62;color:#fff;border:none;font-size:11px;padding:10px">🔗 SHARE</button>
+<button class="btn-mini" onclick="copyPrediksi()" style="background:#FFB703;color:#000;border:none;font-size:11px;padding:10px">📋 COPY</button>
 </div>
-<div style="font-size:9px;color:#718096;margin-top:6px">*Isi No WA di atas dulu, lalu SCAN, baru klik KIRIM. Yang terkirim BBFS + WinRate + Shio + WAKTUNYA NONGOL</div>
+<div style="font-size:9px;color:#718096;margin-top:6px;line-height:1.4">* <b>WA PRIBADI:</b> kirim ke nomor yang di-setting di atas (individu)<br>* <b>WA GROUP:</b> buka WhatsApp → pilih Group mana saja (bisa banyak group!)<br>* <b>COPY:</b> copy paste manual ke group WA</div>
 </div>
 
 <div class="tabs">
@@ -399,17 +401,31 @@ function testNotif(){
 }
 function sendWA(){
  let wa=document.getElementById("waNumber")?.value.trim();
- if(!wa)return alert("Isi No WA dulu di atas bosq!");
+ if(!wa)return alert("Isi No WA dulu di atas bosq! (untuk WA Pribadi)");
  if(!lastNotifMessage || lastNotifMessage.length<10) return alert("Klik SCAN dulu bosq, baru ada prediksi untuk dikirim!");
  window.open("https://wa.me/"+wa+"?text="+encodeURIComponent(lastNotifMessage),"_blank");
+}
+function sendWAGroup(){
+ if(!lastNotifMessage || lastNotifMessage.length<10) return alert("Klik SCAN dulu bosq!");
+ // api.whatsapp.com/send?text= -> buka chooser, bisa pilih GROUP!
+ window.open("https://api.whatsapp.com/send?text="+encodeURIComponent(lastNotifMessage),"_blank");
+}
+function copyPrediksi(){
+ if(!lastNotifMessage || lastNotifMessage.length<10) return alert("SCAN dulu bosq!");
+ navigator.clipboard.writeText(lastNotifMessage).then(()=>{
+   alert("✅ Prediksi di-COPY! Tinggal buka WA Group → Paste (tempel) bosq!");
+ }).catch(()=>{
+   // fallback
+   let ta=document.createElement("textarea"); ta.value=lastNotifMessage; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
+   alert("✅ Di-copy bosq! Buka WA Group → Paste!");
+ });
 }
 function shareNative(){
  if(!lastNotifMessage) return alert("SCAN dulu bosq!");
  if(navigator.share){
-   navigator.share({title:"AlgoFinder V18 - "+document.getElementById("market").value, text:lastNotifMessage}).catch(e=>console.log(e));
+   navigator.share({title:"AlgoFinder V18.1 - "+document.getElementById("market").value, text:lastNotifMessage}).catch(e=>console.log(e));
  }else{
-   // fallback copy
-   navigator.clipboard.writeText(lastNotifMessage).then(()=>alert("Prediksi di-copy! Tinggal paste ke WA bosq!")).catch(()=>alert(lastNotifMessage));
+   copyPrediksi();
  }
 }
 async function sendTelegram(){
